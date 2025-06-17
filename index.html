@@ -24,10 +24,10 @@
   <button onclick="sendServo(0)">歸零</button>
   <div id="result"></div>
   <script>
-    function sendServo(pos) {
+    function sendServo(action) {
       const api = document.getElementById('api').value;
       const token = document.getElementById("password").value; // 你的token
-      fetch(api + '?pos=' + pos + '&token=' + encodeURIComponent(token))
+      fetch(api + '?action=' + action + '&token=' + encodeURIComponent(token))
         .then(r => r.text())
         .then(t => document.getElementById('result').innerText = t)
         .catch(e => document.getElementById('result').innerText = '連線失敗: ' + e);
