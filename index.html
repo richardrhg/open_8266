@@ -14,10 +14,8 @@
 <body>
   <h1>伺服馬達控制面板</h1>
   <div>
-    <label>ESP8266 API網址（例：http://1.2.3.4:80/servo）</label><br>
-    <input id="api" type="text" value="http://1.2.3.4:80/servo" size="40"><br>
-    <label>Token：</label>
-    <input id="token" type="text" value="mySecretToken"><br>
+    <label>ESP8266 API網址（例：http://192.168.1.123/servo）</label><br>
+    <input id="api" type="text" value="http://192.168.1.123/servo" size="40"><br>
   </div>
   <button onclick="sendServo(90)">轉到90度</button>
   <button onclick="sendServo(0)">歸零</button>
@@ -25,15 +23,11 @@
   <script>
     function sendServo(pos) {
       const api = document.getElementById('api').value;
-      const token = document.getElementById('token').value;
-      fetch(api, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'pos=' + pos + '&token=' + encodeURIComponent(token)
-      })
-      .then(r => r.text())
-      .then(t => document.getElementById('result').innerText = t)
-      .catch(e => document.getElementById('result').innerText = '連線失敗: ' + e);
+      const token = '1357924680'; // 你的token
+      fetch(api + '?pos=' + pos + '&token=' + encodeURIComponent(token))
+        .then(r => r.text())
+        .then(t => document.getElementById('result').innerText = t)
+        .catch(e => document.getElementById('result').innerText = '連線失敗: ' + e);
     }
   </script>
 </body>
