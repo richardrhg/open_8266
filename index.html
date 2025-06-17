@@ -16,6 +16,9 @@
   <div>
     <label>ESP8266 API網址（例：http://192.168.1.123/servo）</label><br>
     <input id="api" type="text" value="http://192.168.1.123/servo" size="40"><br>
+    <label>密碼：</label><br>
+    <input id="password" type="text" value="" size="40"><br>
+    
   </div>
   <button onclick="sendServo(90)">轉到90度</button>
   <button onclick="sendServo(0)">歸零</button>
@@ -23,7 +26,7 @@
   <script>
     function sendServo(pos) {
       const api = document.getElementById('api').value;
-      const token = '1357924680'; // 你的token
+      const token = document.getElementById("password").value; // 你的token
       fetch(api + '?pos=' + pos + '&token=' + encodeURIComponent(token))
         .then(r => r.text())
         .then(t => document.getElementById('result').innerText = t)
