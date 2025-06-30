@@ -61,7 +61,12 @@
     function sendServo(action) {
       const api = document.getElementById('api').value;
       const token = document.getElementById("token").value;
-      fetch(api + '?action=' + action + '&token=' + encodeURIComponent(token))
+      fetch(api + '?action=' + action + '&token=' + encodeURIComponent(token),{
+         headers: {
+          'ngrok-skip-browser-warning': '1',
+          // 其他header
+        }
+      })
         .then(r => r.text())
         .then(t => document.getElementById('result').innerText = t)
         .catch(e => document.getElementById('result').innerText = '連線失敗: ' + e);
