@@ -406,9 +406,43 @@
           'ngrok-skip-browser-warning': '1',
         }
       })
-      .then(r => r.text())
-      .then(t => {
-        resultDiv.innerText = t;
+      .then(async (response) => {
+        const rawText = await response.text();
+        const text = (rawText || '').trim();
+
+        let isSuccess = false;
+
+        if (response.ok) {
+          const lower = text.toLowerCase();
+          if (
+            lower.includes('成功') ||
+            lower.includes('success') ||
+            lower.includes('ok') ||
+            lower.includes('done')
+          ) {
+            isSuccess = true;
+          } else {
+            try {
+              const data = JSON.parse(text);
+              if (
+                (typeof data === 'object' && data !== null) &&
+                (data.success === true ||
+                 data.status === 'ok' ||
+                 data.code === 200)
+              ) {
+                isSuccess = true;
+              }
+            } catch (_ignored) {}
+          }
+        }
+
+        resultDiv.innerText = text || (isSuccess ? '成功' : '錯誤');
+
+        if (isSuccess) {
+          resultDiv.classList.remove('result-error');
+        } else {
+          resultDiv.classList.add('result-error');
+        }
       })
       .catch(e => {
         resultDiv.classList.add('result-error');
