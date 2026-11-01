@@ -242,7 +242,7 @@
   <div class="main-container">
     <div id="api-row" class="input-group">
       <label for="api">ESP8266 API網址</label>
-      <input id="api" type="text" value="http://192.168.1.123/servo" placeholder="例：http://192.168.1.123/servo">
+      <input id="api" type="text" value="https://door-proxy.richard-chou.workers.dev/" placeholder="https://door-proxy.richard-chou.workers.dev/">
     </div>
     
     <div id="token-row" class="input-group">
@@ -352,35 +352,18 @@
         disableButton('secondary-btn', 'secondary-countdown', false);
       }
       
-      const url = api + '?action=' + action + '&token=' + encodeURIComponent(token);
+      const url = new URL(api);
+      url.searchParams.set('action', String(action));
+      url.searchParams.set('token', token);
 
-      function request(options) {
-        return fetch(url, options).then(r => {
-          if (r.type === 'opaque') {
-            resultDiv.innerText = '已送出指令';
-            return;
-          }
-          if (!r.ok) {
-            return r.text().then(text => {
-              throw new Error(text || ('HTTP ' + r.status));
-            });
-          }
-          return r.text().then(text => {
-            resultDiv.innerText = text || '成功';
-          });
-        });
-      }
-
-      request({
-        headers: { 'ngrok-skip-browser-warning': '1' }
+      // A command must never be retried automatically: it may already have run.
+      return fetch(url.toString(), { cache: 'no-store' }).then(async r => {
+        const text = await r.text();
+        if (!r.ok) throw new Error(text || ('HTTP ' + r.status));
+        resultDiv.innerText = text || '成功';
       }).catch(err => {
-        return request({
-          mode: 'no-cors',
-          headers: { 'ngrok-skip-browser-warning': '1' }
-        }).catch(() => {
-          resultDiv.classList.add('result-error');
-          resultDiv.innerText = '連線失敗: ' + err.message;
-        });
+        resultDiv.classList.add('result-error');
+        resultDiv.innerText = '無法確認執行結果，請先查看門的狀態：' + err.message;
       });
     }
   </script>
